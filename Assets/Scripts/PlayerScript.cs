@@ -21,10 +21,11 @@ public class PlayerScript : MonoBehaviour
     Vector3 aimEnd;
 
     Rigidbody2D playerRigidBody;
-
+    GameManager gameManager;
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = FindObjectOfType<GameManager>();
         playerRigidBody = GetComponent<Rigidbody2D>();
     }
 
@@ -79,11 +80,14 @@ public class PlayerScript : MonoBehaviour
         {
             case PlayerState.Idle:
                 {
+                    gameManager.SlowMoStop();
                 }
                 break;
             case PlayerState.Aiming:
                 {
-                    aimTransform.DOScale(new Vector3(GameConstants.aimEndScale, 1f, GameConstants.aimEndScale), GameConstants.aimAppearTime).SetEase(Ease.OutBack);
+                    aimTransform.DOScale(new Vector3(GameConstants.aimEndScale, 1f, GameConstants.aimEndScale), GameConstants.aimAppearTime).SetEase(Ease.OutBack).OnComplete(() => {
+                        gameManager.SlowMoStart();
+                    });
                 }
                 break;
             case PlayerState.Boosting:
@@ -121,6 +125,7 @@ public class PlayerScript : MonoBehaviour
                 break;
             case PlayerState.Aiming:
                 {
+                    gameManager.SlowMoStop();
                     aimTransform.DOScale(new Vector3(0.5f, 1f, 0.5f), GameConstants.aimAppearTime).SetEase(Ease.InOutBack);
                 }
                 break;
