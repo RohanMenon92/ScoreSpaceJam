@@ -15,7 +15,9 @@ public class PlayerScript : MonoBehaviour
 {
     public Transform aimTransform;
     public float pushForce = 25f;
-    public int health = GameConstants.maxHealth;
+    public float health = GameConstants.maxHealth;
+
+    bool canBeHit = true;
 
     PlayerState currentState = PlayerState.Idle;
     Vector3 aimStart;
@@ -92,20 +94,26 @@ public class PlayerScript : MonoBehaviour
             case PlayerState.Aiming:
                 {
                     parryShield.EnableShield();
+                    playerRigidBody.velocity = Vector2.zero;
+
                     aimTransform.position = Camera.main.ScreenToWorldPoint(new Vector3(aimStart.x, aimStart.y, -GameConstants.cameraDistance));
                     aimTransform.DOScale(new Vector3(GameConstants.aimEndScale, 1f, GameConstants.aimEndScale), GameConstants.aimAppearTime).SetEase(Ease.OutBack).OnComplete(() => {
-                        gameManager.SlowMoStart();
+                        if(currentState == PlayerState.Aiming)
+                        {
+                            gameManager.SlowMoStart();
+                        }
+                        playerRigidBody.angularVelocity = 0;
                     });
                 }
                 break;
             case PlayerState.Boosting:
                 {
+                    gameManager.SlowMoStop();
+
                     // DO LOOK AT
                     Vector3 direction = (aimEnd - aimStart).normalized;
                     parryShield.BoostAction(direction);
                     transform.DOLookAt(transform.position - direction, GameConstants.playerRotateTime, AxisConstraint.None, transform.up).OnComplete(() => {
-                        playerRigidBody.velocity = Vector2.zero;
-                        playerRigidBody.angularVelocity = 0;
                         playerRigidBody.AddForce(pushForce * transform.forward);
                         SwitchState(PlayerState.Idle);
                     });
@@ -135,7 +143,6 @@ public class PlayerScript : MonoBehaviour
                 break;
             case PlayerState.Aiming:
                 {
-                    gameManager.SlowMoStop();
                     aimTransform.DOScale(new Vector3(0f, 0f, 0f), GameConstants.aimAppearTime).SetEase(Ease.InOutBack);
                 }
                 break;
@@ -214,6 +221,27 @@ public class PlayerScript : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.transform.CompareTag("Bullet") && canBeHit)
+        {
+            BulletScript bullet = collision.transform.GetComponent<BulletScript>();
+            if(bullet.isEnemyShot)
+            {
+                health -= bullet.damage;
+                bullet.OnHit();
+                //canBeHit = false;
+                //StartCoroutine("ResetCanBeHit");
+            }
+        }
+    }
+
+    IEnumerator ResetCanBeHit()
+    {
+        yield return new WaitForSeconds(GameConstants.invulnerabilityDuration);
+        canBeHit = true;
     }
 
     // Update is called once per frame

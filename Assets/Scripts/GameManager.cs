@@ -21,6 +21,14 @@ public class GameManager : MonoBehaviour
     public Transform unusedShotgunBulletPool;
     public Transform unusedGrenadeBulletPool;
 
+    public GameObject gunTurretPrefab;
+    public GameObject shotTurretPrefab;
+    public GameObject dualTurretPrefab;
+
+    public Transform unusedGunTurretPool;
+    public Transform unusedShotTurretPool;
+    public Transform unusedDualTurretPool;
+
     public Transform worldBullets;
 
     public int score;
@@ -48,6 +56,23 @@ public class GameManager : MonoBehaviour
         {
             GameObject newBullet = Instantiate(grenadeBulletPrefab, unusedGrenadeBulletPool);
             newBullet.SetActive(false);
+        }
+
+        // Instantiate turrets pools in start
+        for (int i = 0; i <= GameConstants.gunTurretPoolSize; i++)
+        {
+            GameObject gunTurret = Instantiate(gunTurretPrefab, unusedGunTurretPool);
+            gunTurret.SetActive(false);
+        }
+        for (int i = 0; i <= GameConstants.shotTurretPoolSize; i++)
+        {
+            GameObject gunTurret = Instantiate(shotTurretPrefab, unusedShotTurretPool);
+            gunTurret.SetActive(false);
+        }
+        for (int i = 0; i <= GameConstants.dualTurretPoolSize; i++)
+        {
+            GameObject gunTurret = Instantiate(dualTurretPrefab, unusedDualTurretPool);
+            gunTurret.SetActive(false);
         }
     }
 
@@ -197,7 +222,6 @@ public class GameManager : MonoBehaviour
         return bulletObject;
     }
 
-    // Returning Normal Bullet to pool
     public void ReturnBulletToPool(GameObject bulletToStore, GameConstants.GunTypes bulletType)
     {
         if (bulletType == GameConstants.GunTypes.Machine)
@@ -218,6 +242,49 @@ public class GameManager : MonoBehaviour
         bulletToStore.gameObject.SetActive(false);
         bulletToStore.transform.eulerAngles = Vector3.zero;
         bulletToStore.transform.position = Vector3.zero;
+    }
+
+    // Enemy Pooling
+    public GameObject GetEnemy(GameConstants.EnemyTypes enemyType)
+    {
+        GameObject enemyObject = null;
+        // Get Bullet From pool and return it
+        switch (enemyType)
+        {
+            // Get First Child, set parent to gunport (to remove from respective pool)
+            case GameConstants.EnemyTypes.GunTurret:
+                enemyObject = unusedGunTurretPool.GetComponentInChildren<TurretController>(true).gameObject;
+                break;
+            case GameConstants.EnemyTypes.ShotTurret:
+                enemyObject = unusedShotTurretPool.GetComponentInChildren<TurretController>(true).gameObject;
+                break;
+            case GameConstants.EnemyTypes.DualTurret:
+                enemyObject = unusedDualTurretPool.GetComponentInChildren<TurretController>(true).gameObject;
+                break;
+        }
+
+        enemyObject.transform.SetParent(worldBullets);
+        // Return bullet and let GunPort handle how to fire and set initial velocities
+        return enemyObject;
+    }
+
+    public void ReturnEnemyToPool(GameObject enemyToStore, GameConstants.EnemyTypes enemyType)
+    {
+        switch(enemyType)
+        {
+            case GameConstants.EnemyTypes.GunTurret:
+                enemyToStore.transform.SetParent(unusedGunTurretPool);
+                break;
+            case GameConstants.EnemyTypes.ShotTurret:
+                enemyToStore.transform.SetParent(unusedShotTurretPool);
+                break;
+            case GameConstants.EnemyTypes.DualTurret:
+                enemyToStore.transform.SetParent(unusedDualTurretPool);
+                break;
+        }
+        enemyToStore.gameObject.SetActive(false);
+        enemyToStore.transform.eulerAngles = Vector3.zero;
+        enemyToStore.transform.position = Vector3.zero;
     }
 
     // SlowMo

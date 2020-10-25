@@ -55,7 +55,7 @@ public class GunPort : MonoBehaviour
                     {
                         BulletScript newShoutgunBullet = gameManager.GetBullet(gunType, transform).GetComponent<BulletScript>();
                         float variance = +Random.Range(-1f, 1f);
-                        newShoutgunBullet.transform.position = transform.position + (transform.forward) + (transform.right * variance);
+                        newShoutgunBullet.transform.position = transform.position + (transform.forward) + (transform.right * variance * 2);
                         newShoutgunBullet.transform.eulerAngles =  new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + variance, transform.eulerAngles.z);
                         newShoutgunBullet.isEnemyShot = isEnemy;
                         // Set bullet velocity to ship velocity

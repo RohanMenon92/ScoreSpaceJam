@@ -22,7 +22,7 @@ public class ParryShield : MonoBehaviour
 
     internal void EnableShield()
     {
-        transform.DOScale(5f, GameConstants.shieldAppearTime).SetEase(Ease.InOutBack);
+        transform.DOScale(GameConstants.parrySize, GameConstants.shieldAppearTime).SetEase(Ease.InOutBack);
     }
 
     internal void DisableShield()

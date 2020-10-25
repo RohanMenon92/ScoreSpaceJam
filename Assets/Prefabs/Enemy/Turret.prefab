@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 85ceeca3436653f439c72f5dda1a742e, type: 2}
+  - {fileID: 2100000, guid: a4a7e9fb7e9b2e647b9415495e657f0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -172,9 +172,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c2b2f9a63b712d40a6707b1663c454e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 0
   gunPorts:
   - {fileID: 3662984090961217639}
   rotateSpeed: 2
+  health: 5
 --- !u!50 &-9118100753700854339
 Rigidbody2D:
   serializedVersion: 4
