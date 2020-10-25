@@ -7,10 +7,13 @@ public class GameConstants
     // Time constants
     public static float playerRotateTime = 0.25f;
     public static float aimAppearTime = 0.5f;
-    public static float shieldAppearTime = 0.15f;
+    public static float shieldAppearTime = 0.1f;
     public static float invulnerabilityDuration = 0.2f;
-    public static float attackShow = 0.1f;
+    public static float attackShow = 0.2f;
     public static float attackMove = 0.2f;
+    public static float healthUpdate = 1f;
+
+    public static float stunTime = 5f;
 
     // Enemy Constants
     public static float turretRange = 15f;
@@ -31,8 +34,9 @@ public class GameConstants
     public static int grenadeBulletPoolSize = 200;
 
     //  Value Constants
-    public static int maxHealth = 100;
-    public static float parrySize = 10f;
+    public static int maxHealth = 40;
+    public static float maxTime = 120;
+    public static float parrySize = 7.5f;
     public static float parryForce = 500;
 
     public static float aimEndScale = 3f;
@@ -40,7 +44,11 @@ public class GameConstants
     public static float cameraLeadConstant = 0.3f;
 
     public static float cameraDistance = -20f;
-    internal static float timeSlowDown = 0.1f;
+    public static float timeSlowDown = 0.1f;
+
+    public static float attackHealthGain = 10f;
+    public static float attackTimeGain = 30f;
+
 
     public enum GunTypes
     {

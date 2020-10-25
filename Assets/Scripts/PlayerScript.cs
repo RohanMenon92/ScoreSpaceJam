@@ -42,6 +42,7 @@ public class PlayerScript : MonoBehaviour
         parryShield.transform.localScale = Vector3.zero;
 
         attackSprite.color = new Color(0f, 0f, 0f, 0f);
+        gameManager.OnHealthUpdate(health / GameConstants.maxHealth);
     }
 
     // FSM region
@@ -131,6 +132,7 @@ public class PlayerScript : MonoBehaviour
                 break;
             case PlayerState.Attacking:
                 {
+                    attackSprite.color = new Color(0f, 0f, 0f, 1f);
                     parryShield.DisableShield();
                     playerRigidBody.gravityScale = 0;
                     camFollow.ZoomIn();
@@ -315,7 +317,7 @@ public class PlayerScript : MonoBehaviour
             // check Successful attack
             if (attackedEnemy.RegisterAttack())
             {
-                SwitchState(PlayerState.Idle);
+                SuccessfulAttack();
             } else
             {
                 SetAttackDirection(attackedEnemy.GetCurrentAttack());
@@ -327,7 +329,13 @@ public class PlayerScript : MonoBehaviour
             attackedEnemy.ResetAttackSequence();
             SwitchState(PlayerState.Idle);
         }
+    }
 
+    void SuccessfulAttack()
+    {
+        health += GameConstants.attackHealthGain;
+        gameManager.SuccessfulAttack(health/GameConstants.maxHealth);
+        SwitchState(PlayerState.Idle);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -338,6 +346,7 @@ public class PlayerScript : MonoBehaviour
             if(bullet.isEnemyShot)
             {
                 health -= bullet.damage;
+                gameManager.OnHealthUpdate(health/GameConstants.maxHealth);
                 bullet.OnHit();
                 //canBeHit = false;
                 //StartCoroutine("ResetCanBeHit");

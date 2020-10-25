@@ -11,6 +11,8 @@ public class TurretController : MonoBehaviour
     public int attackCount = 5;
 
     public float health = 20f;
+    public bool isStunned = false;
+    public float isStunnedTime;
 
     bool isInRange;
     PlayerScript player;
@@ -44,6 +46,8 @@ public class TurretController : MonoBehaviour
 
     public void ResetAttackSequence()
     {
+        isStunned = false;
+        isStunnedTime = 0f;
         attackSequence.Clear();
         for (int i = 0; i <= attackCount; i++)
         {
@@ -54,8 +58,19 @@ public class TurretController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CheckPlayerRange();
-        TryToAim();
+        if(isStunned)
+        {
+            isStunnedTime -= Time.deltaTime;
+            transform.eulerAngles += new Vector3(0f, 5f, 3f);
+            if(isStunnedTime <= 0)
+            {
+                isStunned = false;
+            }
+        } else
+        {
+            CheckPlayerRange();
+            TryToAim();
+        }
     }
 
     void CheckPlayerRange()
@@ -85,14 +100,19 @@ public class TurretController : MonoBehaviour
         if (collision.transform.CompareTag("Bullet"))
         {
             BulletScript bullet = collision.transform.GetComponent<BulletScript>();
-            health -= bullet.damage;
-
-            if(health < 0)
+            if(!bullet.isEnemyShot)
             {
-                OnDeath();
-            }
+                isStunned = true;
+                isStunnedTime = GameConstants.stunTime;
+                health -= bullet.damage;
 
-            bullet.OnHit();
+                if (health < 0)
+                {
+                    OnDeath();
+                }
+
+                bullet.OnHit();
+            }
             //canBeHit = false;
             //StartCoroutine("ResetCanBeHit");
         }
@@ -105,6 +125,7 @@ public class TurretController : MonoBehaviour
 
     public bool RegisterAttack()
     {
+        isStunnedTime = GameConstants.stunTime;
         attackSequence.Pop();
         if(attackSequence.Count == 0)
         {

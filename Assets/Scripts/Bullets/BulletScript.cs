@@ -26,7 +26,7 @@ public class BulletScript : MonoBehaviour
 
     void OnEnable()
     {
-        if(rigidbody == null)
+        if (rigidbody == null)
         {
             rigidbody = GetComponent<Rigidbody2D>();
         }
@@ -61,8 +61,10 @@ public class BulletScript : MonoBehaviour
     // Called when player refelects a shot
     public void OnParry(Vector3 direction)
     {
+        this.GetComponent<MeshRenderer>().material = gameManager.parriedBulletMaterial;
+
         // When HitByShield, reverseBullet according to normal Vector
-        isEnemyShot = !isEnemyShot;
+        isEnemyShot = false;
         timeAlive = 0;
 
         rigidbody.velocity = Vector3.zero;

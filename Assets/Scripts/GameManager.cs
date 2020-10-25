@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum GameState
 {
@@ -31,16 +32,29 @@ public class GameManager : MonoBehaviour
 
     public Transform worldBullets;
 
+    public Image healthHolder;
+    public Image healthBar;
+
+    public Image timeHolder;
+    public Image timeBar;
+
     public int score;
-    public int time;
+    public float time;
+
+    public Material parriedBulletMaterial;
+
+    Sequence healthSequence;
 
     GameState currentState;
+
 
     // Start is called before the first frame update
     void Start()
     {
         // reset score
         score = 0;
+        time = GameConstants.maxTime;
+
         // Instantiate bullet pools in start
         for (int i = 0; i <= GameConstants.bulletPoolSize; i++)
         {
@@ -224,22 +238,25 @@ public class GameManager : MonoBehaviour
 
     public void ReturnBulletToPool(GameObject bulletToStore, GameConstants.GunTypes bulletType)
     {
-        if (bulletType == GameConstants.GunTypes.Machine)
+        switch(bulletType)
         {
-            // Return to normal bullet pool
-            bulletToStore.transform.SetParent(unusedBulletPool);
+            case GameConstants.GunTypes.Machine:
+                // Return to normal bullet pool
+                bulletToStore.transform.SetParent(unusedBulletPool);
+                bulletToStore.GetComponent<MeshRenderer>().material = bulletPrefab.GetComponent<MeshRenderer>().sharedMaterial;
+                break;
+            case GameConstants.GunTypes.Shot:
+                // Return to shotgun bullet pool
+                bulletToStore.transform.SetParent(unusedShotgunBulletPool);
+                bulletToStore.GetComponent<MeshRenderer>().material = shotgunBulletPrefab.GetComponent<MeshRenderer>().sharedMaterial;
+                break;
+            case GameConstants.GunTypes.Grenade:
+                // Return to laser bullet pool
+                bulletToStore.transform.SetParent(unusedGrenadeBulletPool);
+                bulletToStore.GetComponent<MeshRenderer>().material = grenadeBulletPrefab.GetComponent<MeshRenderer>().sharedMaterial;
+                break;
         }
-        else if (bulletType == GameConstants.GunTypes.Shot)
-        {
-            // Return to shotgun bullet pool
-            bulletToStore.transform.SetParent(unusedShotgunBulletPool);
-        }
-        else if (bulletType == GameConstants.GunTypes.Grenade)
-        {
-            // Return to laser bullet pool
-            bulletToStore.transform.SetParent(unusedGrenadeBulletPool);
-        }
-        bulletToStore.gameObject.SetActive(false);
+       bulletToStore.gameObject.SetActive(false);
         bulletToStore.transform.eulerAngles = Vector3.zero;
         bulletToStore.transform.position = Vector3.zero;
     }
@@ -299,10 +316,43 @@ public class GameManager : MonoBehaviour
         Time.fixedDeltaTime = 0.02F;
     }
 
+    public void SuccessfulAttack(float healthFraction)
+    {
+        OnHealthUpdate(healthFraction);
+
+        timeBar.rectTransform.DOScale(1.5f, GameConstants.healthUpdate / 2).SetLoops(2, LoopType.Yoyo);
+        if (time + GameConstants.attackTimeGain < GameConstants.maxTime)
+        {
+            time += GameConstants.attackTimeGain;
+        } else
+        {
+            time = GameConstants.attackTimeGain;
+        }
+    }
+
+    public void OnHealthUpdate(float fraction)
+    {
+        //if(healthSequence != null && healthSequence.IsPlaying())
+        //{
+        //    healthSequence.Complete();
+        //}
+
+        healthSequence = DOTween.Sequence();
+
+        healthSequence.Insert(0f, healthHolder.DOFade(1f, 0f));
+        healthSequence.Insert(0f, healthBar.DOFade(1f, 0f));
+        healthSequence.Insert(0f, healthBar.rectTransform.DOScale(1.2f, GameConstants.healthUpdate / 2).SetLoops(2, LoopType.Yoyo));
+        healthSequence.Insert(0f, healthBar.DOFillAmount(fraction, GameConstants.healthUpdate).SetEase(Ease.OutBack));
+
+        healthSequence.Insert(GameConstants.healthUpdate, healthHolder.DOFade(0.25f, GameConstants.healthUpdate));
+        healthSequence.Insert(GameConstants.healthUpdate, healthBar.DOFade(0.25f, GameConstants.healthUpdate));
+        healthSequence.Play();
+    }
 
     // Update is called once per frame
     void Update()
     {
-        
+        time -= Time.deltaTime;
+        timeBar.fillAmount = time / GameConstants.maxTime;
     }
 }

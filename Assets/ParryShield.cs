@@ -49,8 +49,13 @@ public class ParryShield : MonoBehaviour
         }
         if (collision.transform.CompareTag("Enemy"))
         {
-            if (player.attackedEnemy == null || Vector3.Distance(player.attackedEnemy.transform.position, player.transform.position) > Vector3.Distance(collision.transform.position, player.transform.position)) {
-                player.SetAttackedEnemy(collision.GetComponent<TurretController>());
+            TurretController turret = collision.GetComponent<TurretController>();
+            if(turret.isStunned)
+            {
+                if (player.attackedEnemy == null || Vector3.Distance(player.attackedEnemy.transform.position, player.transform.position) > Vector3.Distance(collision.transform.position, player.transform.position))
+                {
+                    player.SetAttackedEnemy(turret);
+                }
             }
         }
     }
@@ -79,7 +84,7 @@ public class ParryShield : MonoBehaviour
     {
         foreach(Transform bullet in affectedBullets)
         {
-            bullet.GetComponent<BulletScript>().OnParry(-direction);
+            bullet.GetComponent<BulletScript>().OnParry(direction);
         }
 
         DisableShield();
