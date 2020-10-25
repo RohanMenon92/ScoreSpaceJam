@@ -15,6 +15,7 @@ public class TurretController : MonoBehaviour
     public float isStunnedTime;
 
     bool isInRange;
+    bool isUnderAttack;
     PlayerScript player;
     GameManager gameManager;
     Stack<GameConstants.AttackDirection> attackSequence = new Stack<GameConstants.AttackDirection>();
@@ -27,6 +28,7 @@ public class TurretController : MonoBehaviour
 
     private void OnEnable()
     {
+
         switch (enemyType)
         {
             case GameConstants.EnemyTypes.GunTurret:
@@ -46,6 +48,11 @@ public class TurretController : MonoBehaviour
 
     public void ResetAttackSequence()
     {
+        if (health < 0)
+        {
+            OnDeath();
+        }
+        isUnderAttack = false;
         isStunned = false;
         isStunnedTime = 0f;
         attackSequence.Clear();
@@ -108,7 +115,10 @@ public class TurretController : MonoBehaviour
 
                 if (health < 0)
                 {
-                    OnDeath();
+                    if(!isUnderAttack)
+                    {
+                        OnDeath();
+                    }
                 }
 
                 bullet.OnHit();
@@ -125,6 +135,7 @@ public class TurretController : MonoBehaviour
 
     public bool RegisterAttack()
     {
+        isUnderAttack = true;
         isStunnedTime = GameConstants.stunTime;
         attackSequence.Pop();
         if(attackSequence.Count == 0)

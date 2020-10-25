@@ -6,14 +6,15 @@ public class GameConstants
 {
     // Time constants
     public static float playerRotateTime = 0.25f;
-    public static float aimAppearTime = 0.5f;
+    public static float hitShakeDuration = 0.5f;
+    public static float stunTime = 5f;
+
+    public static float aimAppearTime = 0.2f;
     public static float shieldAppearTime = 0.1f;
     public static float invulnerabilityDuration = 0.2f;
     public static float attackShow = 0.2f;
     public static float attackMove = 0.2f;
     public static float healthUpdate = 1f;
-
-    public static float stunTime = 5f;
 
     // Enemy Constants
     public static float turretRange = 15f;

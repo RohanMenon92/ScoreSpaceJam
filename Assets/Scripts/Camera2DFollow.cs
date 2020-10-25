@@ -12,7 +12,7 @@ public class Camera2DFollow : MonoBehaviour
     void Start()
     {
         targetRB = target.GetComponent<Rigidbody2D>();
-        cam = GetComponent<Camera>();
+        cam = GetComponentInChildren<Camera>();
     }
 
     // Update is called once per frame
@@ -33,8 +33,8 @@ public class Camera2DFollow : MonoBehaviour
         cam.DOFieldOfView(15, GameConstants.attackMove);
     }
 
-    public void ZoomOut()
+    public void CameraShake(float strength)
     {
-
+        cam.DOShakeRotation(GameConstants.hitShakeDuration, strength * 3, 10, 90, true).OnComplete(() => { });
     }
 }

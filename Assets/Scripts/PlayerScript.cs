@@ -345,13 +345,19 @@ public class PlayerScript : MonoBehaviour
             BulletScript bullet = collision.transform.GetComponent<BulletScript>();
             if(bullet.isEnemyShot)
             {
-                health -= bullet.damage;
-                gameManager.OnHealthUpdate(health/GameConstants.maxHealth);
+                OnHit(bullet.damage);
                 bullet.OnHit();
                 //canBeHit = false;
                 //StartCoroutine("ResetCanBeHit");
             }
         }
+    }
+
+    void OnHit(float damage)
+    {
+        camFollow.CameraShake(damage);
+        health -= damage;
+        gameManager.OnHealthUpdate(health / GameConstants.maxHealth);
     }
 
     void SetAttackDirection(GameConstants.AttackDirection dir)
