@@ -140,6 +140,7 @@ public class TurretController : MonoBehaviour
         attackSequence.Pop();
         if(attackSequence.Count == 0)
         {
+            gameManager.AddScore(GameConstants.successAttackScore);
             OnDeath();
         }
         return attackSequence.Count == 0;
@@ -147,6 +148,7 @@ public class TurretController : MonoBehaviour
 
     public void OnDeath()
     {
+        gameManager.AddScore(GameConstants.enemyKillScore);
         gameManager.ReturnEnemyToPool(gameObject, enemyType);
     }
 }

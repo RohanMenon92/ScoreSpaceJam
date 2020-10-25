@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System;
 
 public enum GameState
 {
@@ -37,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     public Image timeHolder;
     public Image timeBar;
+    public TextMeshProUGUI scoreHolder;
 
     public int score;
     public float time;
@@ -153,6 +156,13 @@ public class GameManager : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    internal void AddScore(int scoreAmount)
+    {
+        healthSequence.Insert(0f, healthBar.rectTransform.DOScale(1.2f, GameConstants.scoreUpdate).SetLoops(2, LoopType.Yoyo));
+        score += scoreAmount;
+        scoreHolder.SetText(GameConstants.scorePrefix + score);
     }
 
     IEnumerator WaitStateSwitch(GameState newState, float delay)
@@ -320,7 +330,7 @@ public class GameManager : MonoBehaviour
     {
         OnHealthUpdate(healthFraction);
 
-        timeBar.rectTransform.DOScale(1.5f, GameConstants.healthUpdate / 2).SetLoops(2, LoopType.Yoyo);
+        timeBar.rectTransform.DOScale(1.5f, GameConstants.healthUpdate).SetLoops(2, LoopType.Yoyo);
         if (time + GameConstants.attackTimeGain < GameConstants.maxTime)
         {
             time += GameConstants.attackTimeGain;
@@ -341,7 +351,7 @@ public class GameManager : MonoBehaviour
 
         healthSequence.Insert(0f, healthHolder.DOFade(1f, 0f));
         healthSequence.Insert(0f, healthBar.DOFade(1f, 0f));
-        healthSequence.Insert(0f, healthBar.rectTransform.DOScale(1.2f, GameConstants.healthUpdate / 2).SetLoops(2, LoopType.Yoyo));
+        healthSequence.Insert(0f, healthBar.rectTransform.DOScale(1.2f, GameConstants.healthUpdate).SetLoops(2, LoopType.Yoyo));
         healthSequence.Insert(0f, healthBar.DOFillAmount(fraction, GameConstants.healthUpdate).SetEase(Ease.OutBack));
 
         healthSequence.Insert(GameConstants.healthUpdate, healthHolder.DOFade(0.25f, GameConstants.healthUpdate));

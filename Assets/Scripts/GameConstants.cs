@@ -15,6 +15,7 @@ public class GameConstants
     public static float attackShow = 0.2f;
     public static float attackMove = 0.2f;
     public static float healthUpdate = 1f;
+    public static float scoreUpdate = 0.5f;
 
     // Enemy Constants
     public static float turretRange = 15f;
@@ -50,6 +51,10 @@ public class GameConstants
     public static float attackHealthGain = 10f;
     public static float attackTimeGain = 30f;
 
+    // Score
+    public static string scorePrefix = "Score: ";
+    public static int successAttackScore = 25;
+    public static int enemyKillScore = 10;
 
     public enum GunTypes
     {
