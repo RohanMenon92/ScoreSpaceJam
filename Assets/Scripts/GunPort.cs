@@ -53,15 +53,15 @@ public class GunPort : MonoBehaviour
                     // Do it for 5 shots
                     for(int i = 0; i < 6; i++)
                     {
-                        ShotgunBulletScript newShoutgunBullet = gameManager.GetBullet(gunType, transform).GetComponent<ShotgunBulletScript>();
+                        BulletScript newShoutgunBullet = gameManager.GetBullet(gunType, transform).GetComponent<BulletScript>();
                         float variance = +Random.Range(-1f, 1f);
-                        newShoutgunBullet.transform.position = transform.position + (transform.forward * variance);
-                        newShoutgunBullet.transform.eulerAngles =  new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + variance);
+                        newShoutgunBullet.transform.position = transform.position + (transform.forward) + (transform.right * variance);
+                        newShoutgunBullet.transform.eulerAngles =  new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + variance, transform.eulerAngles.z);
                         newShoutgunBullet.isEnemyShot = isEnemy;
                         // Set bullet velocity to ship velocity
                         newShoutgunBullet.GetComponent<Rigidbody2D>().velocity = initVelocity;
                         newShoutgunBullet.gameObject.SetActive(true);
-                        newShoutgunBullet.FireShotgun();
+                        newShoutgunBullet.FireBullet();
                     }
                     //musicPlayer.clip = shotgunSound;
                     //if (!musicPlayer.isPlaying)
@@ -73,7 +73,7 @@ public class GunPort : MonoBehaviour
                     // Set Initial Velocity of rigidbody
                     break;
                 case GameConstants.GunTypes.Grenade:
-                    GrenadeScript grenadeBullet = gameManager.GetBullet(gunType, transform).GetComponent<GrenadeScript>();
+                    BulletScript grenadeBullet = gameManager.GetBullet(gunType, transform).GetComponent<BulletScript>();
                     grenadeBullet.transform.position = transform.position + transform.forward;
                     grenadeBullet.transform.rotation = transform.rotation;
                     grenadeBullet.isEnemyShot = isEnemy;

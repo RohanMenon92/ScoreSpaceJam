@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4178463540410633794}
   - component: {fileID: 4813469148389989624}
   - component: {fileID: 2362774038683879846}
-  - component: {fileID: -5732962803171107241}
   - component: {fileID: 167651067394950902}
   - component: {fileID: -8277554029622169680}
+  - component: {fileID: 5994368060946660065}
   m_Layer: 0
   m_Name: GrenadeBullet
   m_TagString: Bullet
@@ -82,22 +82,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &-5732962803171107241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2177373423375001714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 798327a1f0631fb4aaafade9a8517ff3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnemyShot: 0
-  damage: 1
-  bulletSpeed: 2
-  aliveForSeconds: 4
 --- !u!58 &167651067394950902
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -135,3 +119,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &5994368060946660065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2177373423375001714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aadb70739b1ebce4fbe3aa2cbdd7a37e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunType: 2
+  isEnemyShot: 0
+  damage: 3
+  bulletSpeed: 2
+  aliveForSeconds: 4

@@ -23,12 +23,16 @@ public class PlayerScript : MonoBehaviour
 
     Rigidbody2D playerRigidBody;
     GameManager gameManager;
+    ParryShield parryShield;
     // Start is called before the first frame update
     void Start()
     {
         health = GameConstants.maxHealth;
+        parryShield = GetComponentInChildren<ParryShield>();
         gameManager = FindObjectOfType<GameManager>();
         playerRigidBody = GetComponent<Rigidbody2D>();
+
+        parryShield.transform.localScale = Vector3.zero;
     }
 
     // FSM region
@@ -87,6 +91,7 @@ public class PlayerScript : MonoBehaviour
                 break;
             case PlayerState.Aiming:
                 {
+                    parryShield.EnableShield();
                     aimTransform.position = Camera.main.ScreenToWorldPoint(new Vector3(aimStart.x, aimStart.y, -GameConstants.cameraDistance));
                     aimTransform.DOScale(new Vector3(GameConstants.aimEndScale, 1f, GameConstants.aimEndScale), GameConstants.aimAppearTime).SetEase(Ease.OutBack).OnComplete(() => {
                         gameManager.SlowMoStart();
@@ -96,7 +101,9 @@ public class PlayerScript : MonoBehaviour
             case PlayerState.Boosting:
                 {
                     // DO LOOK AT
-                    transform.DOLookAt(transform.position - (aimEnd - aimStart).normalized, GameConstants.playerRotateTime, AxisConstraint.None, transform.up).OnComplete(() => {
+                    Vector3 direction = (aimEnd - aimStart).normalized;
+                    parryShield.BoostAction(direction);
+                    transform.DOLookAt(transform.position - direction, GameConstants.playerRotateTime, AxisConstraint.None, transform.up).OnComplete(() => {
                         playerRigidBody.velocity = Vector2.zero;
                         playerRigidBody.angularVelocity = 0;
                         playerRigidBody.AddForce(pushForce * transform.forward);
@@ -192,6 +199,7 @@ public class PlayerScript : MonoBehaviour
                             SwitchState(PlayerState.Boosting);
                         } else
                         {
+                            parryShield.DisableShield();
                             SwitchState(PlayerState.Idle);
                         }
                     }

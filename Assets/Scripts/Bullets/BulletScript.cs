@@ -6,6 +6,7 @@ using UnityEngine;
 public class BulletScript : MonoBehaviour
 {
     // Can be part of a "Bullet" Super Class
+    public GameConstants.GunTypes gunType = GameConstants.GunTypes.Machine;
     public bool isEnemyShot;
     public float damage;
     public float bulletSpeed;
@@ -49,7 +50,7 @@ public class BulletScript : MonoBehaviour
     void ReturnBulletToPool()
     {
         // Return Bullet
-        gameManager.ReturnBulletToPool(gameObject, GameConstants.GunTypes.Machine);
+        gameManager.ReturnBulletToPool(gameObject, gunType);
     }
 
     internal void OnHit()
@@ -58,14 +59,14 @@ public class BulletScript : MonoBehaviour
     }
 
     // Called when player refelects a shot
-    internal void OnShield(Vector3 normalVector)
+    public void OnParry(Vector3 direction)
     {
         // When HitByShield, reverseBullet according to normal Vector
         isEnemyShot = !isEnemyShot;
         timeAlive = 0;
 
-        Vector3 newVelocity = Vector3.Reflect(this.GetComponent<Rigidbody>().velocity, normalVector);
-        rigidbody.velocity = new Vector3(newVelocity.x, newVelocity.z);
+        rigidbody.velocity = Vector3.zero;
+        rigidbody.AddForce(-direction * GameConstants.parryForce);
     }
 
     internal void FireBullet()

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Aim
+  - Bullet
   layers:
   - Default
   - TransparentFX

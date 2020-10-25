@@ -94,10 +94,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aadb70739b1ebce4fbe3aa2cbdd7a37e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gunType: 0
   isEnemyShot: 0
-  damage: 1
+  damage: 4
   bulletSpeed: 5
-  aliveForSeconds: 2
+  aliveForSeconds: 3
 --- !u!50 &-4401240488058294037
 Rigidbody2D:
   serializedVersion: 4

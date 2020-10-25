@@ -184,10 +184,10 @@ public class GameManager : MonoBehaviour
                 bulletObject = unusedBulletPool.GetComponentInChildren<BulletScript>(true).gameObject;
                 break;
             case GameConstants.GunTypes.Shot:
-                bulletObject = unusedShotgunBulletPool.GetComponentInChildren<ShotgunBulletScript>(true).gameObject;
+                bulletObject = unusedShotgunBulletPool.GetComponentInChildren<BulletScript>(true).gameObject;
                 break;
             case GameConstants.GunTypes.Grenade:
-                bulletObject = unusedGrenadeBulletPool.GetComponentInChildren<GrenadeScript>(true).gameObject;
+                bulletObject = unusedGrenadeBulletPool.GetComponentInChildren<BulletScript>(true).gameObject;
                 break;
         }
 
@@ -223,7 +223,7 @@ public class GameManager : MonoBehaviour
     // SlowMo
     public void SlowMoStart()
     {
-        Time.timeScale = 0.2f;
+        Time.timeScale = GameConstants.timeSlowDown;
         Time.fixedDeltaTime = 0.02F * Time.timeScale;
     }
     public void SlowMoStop()
