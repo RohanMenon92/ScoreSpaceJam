@@ -15,6 +15,7 @@ public class PlayerScript : MonoBehaviour
 {
     public Transform aimTransform;
     public float pushForce = 25f;
+    public int health = GameConstants.maxHealth;
 
     PlayerState currentState = PlayerState.Idle;
     Vector3 aimStart;
@@ -25,6 +26,7 @@ public class PlayerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        health = GameConstants.maxHealth;
         gameManager = FindObjectOfType<GameManager>();
         playerRigidBody = GetComponent<Rigidbody2D>();
     }
@@ -85,6 +87,7 @@ public class PlayerScript : MonoBehaviour
                 break;
             case PlayerState.Aiming:
                 {
+                    aimTransform.position = Camera.main.ScreenToWorldPoint(new Vector3(aimStart.x, aimStart.y, -GameConstants.cameraDistance));
                     aimTransform.DOScale(new Vector3(GameConstants.aimEndScale, 1f, GameConstants.aimEndScale), GameConstants.aimAppearTime).SetEase(Ease.OutBack).OnComplete(() => {
                         gameManager.SlowMoStart();
                     });
@@ -126,7 +129,7 @@ public class PlayerScript : MonoBehaviour
             case PlayerState.Aiming:
                 {
                     gameManager.SlowMoStop();
-                    aimTransform.DOScale(new Vector3(0.5f, 1f, 0.5f), GameConstants.aimAppearTime).SetEase(Ease.InOutBack);
+                    aimTransform.DOScale(new Vector3(0f, 0f, 0f), GameConstants.aimAppearTime).SetEase(Ease.InOutBack);
                 }
                 break;
             case PlayerState.Boosting:
@@ -149,7 +152,9 @@ public class PlayerScript : MonoBehaviour
                 break;
             case PlayerState.Aiming:
                 {
-                    aimTransform.LookAt(transform.position - (Input.mousePosition - aimStart).normalized, transform.up);
+                    Vector3 target = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -GameConstants.cameraDistance));
+                    // "Do NOT LookAt"
+                    aimTransform.LookAt(aimTransform.position - (target - aimTransform.position), transform.up);
                 }
                 break;
             case PlayerState.Boosting:

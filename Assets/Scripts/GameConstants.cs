@@ -17,12 +17,14 @@ public class GameConstants
     public static int shotBulletPoolSize = 200;
     public static int grenadeBulletPoolSize = 200;
 
-
     //  Value Constants
-    public static float aimEndScale = 5f;
+    public static int maxHealth = 100;
+
+    public static float aimEndScale = 3f;
     public static float aimThreshold = 1f;
     public static float cameraLeadConstant = 0.3f;
     public static float cameraDistance = -15f;
+
     public enum GunTypes
     {
         Machine,
