@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 3519817965959251289}
   m_Layer: 0
   m_Name: ShotTurret
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

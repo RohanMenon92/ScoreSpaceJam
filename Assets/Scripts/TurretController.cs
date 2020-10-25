@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,17 +8,47 @@ public class TurretController : MonoBehaviour
     public GameConstants.EnemyTypes enemyType;
     public List<GunPort> gunPorts = new List<GunPort>();
     public float rotateSpeed = 0.75f;
+    public int attackCount = 5;
 
     public float health = 20f;
 
     bool isInRange;
     PlayerScript player;
     GameManager gameManager;
+    Stack<GameConstants.AttackDirection> attackSequence = new Stack<GameConstants.AttackDirection>();
     // Start is called before the first frame update
     void Start()
     {
         player = FindObjectOfType<PlayerScript>();
         gameManager = FindObjectOfType<GameManager>();
+    }
+
+    private void OnEnable()
+    {
+        switch (enemyType)
+        {
+            case GameConstants.EnemyTypes.GunTurret:
+                health = GameConstants.gunTurretHealth;
+                break;
+
+            case GameConstants.EnemyTypes.ShotTurret:
+                health = GameConstants.shotTurretHealth;
+                break;
+
+            case GameConstants.EnemyTypes.DualTurret:
+                health = GameConstants.dualTurretHealth;
+                break;
+        }
+        ResetAttackSequence();
+    }
+
+    public void ResetAttackSequence()
+    {
+        attackSequence.Clear();
+        for (int i = 0; i <= attackCount; i++)
+        {
+            attackSequence.Push((GameConstants.AttackDirection)Random.Range(0, 3));
+        }
     }
 
     // Update is called once per frame
@@ -65,6 +96,21 @@ public class TurretController : MonoBehaviour
             //canBeHit = false;
             //StartCoroutine("ResetCanBeHit");
         }
+    }
+
+    public GameConstants.AttackDirection GetCurrentAttack()
+    {
+        return attackSequence.Peek();
+    }
+
+    public bool RegisterAttack()
+    {
+        attackSequence.Pop();
+        if(attackSequence.Count == 0)
+        {
+            OnDeath();
+        }
+        return attackSequence.Count == 0;
     }
 
     public void OnDeath()

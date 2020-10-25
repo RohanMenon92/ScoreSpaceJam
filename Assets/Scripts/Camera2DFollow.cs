@@ -7,12 +7,12 @@ public class Camera2DFollow : MonoBehaviour
 {
     public Transform target;
     Rigidbody2D targetRB;
-    Camera camera;
+    Camera cam;
     // Start is called before the first frame update
     void Start()
     {
         targetRB = target.GetComponent<Rigidbody2D>();
-        camera = GetComponent<Camera>();
+        cam = GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -25,12 +25,12 @@ public class Camera2DFollow : MonoBehaviour
 
     public void ZoomNormal()
     {
-
+        cam.DOFieldOfView(45, GameConstants.attackMove);
     }
 
     public void ZoomIn()
     {
-        
+        cam.DOFieldOfView(15, GameConstants.attackMove);
     }
 
     public void ZoomOut()

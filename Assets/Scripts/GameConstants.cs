@@ -9,6 +9,8 @@ public class GameConstants
     public static float aimAppearTime = 0.5f;
     public static float shieldAppearTime = 0.15f;
     public static float invulnerabilityDuration = 0.2f;
+    public static float attackShow = 0.1f;
+    public static float attackMove = 0.2f;
 
     // Enemy Constants
     public static float turretRange = 15f;
@@ -18,6 +20,11 @@ public class GameConstants
     internal static int shotTurretPoolSize = 10;
     internal static int dualTurretPoolSize = 5;
 
+    internal static float gunTurretHealth = 5;
+    internal static float shotTurretHealth = 5;
+    internal static float dualTurretHealth = 10;
+
+
     // Bullet Constants
     public static int bulletPoolSize = 200;
     public static int shotBulletPoolSize = 200;
@@ -25,7 +32,7 @@ public class GameConstants
 
     //  Value Constants
     public static int maxHealth = 100;
-    public static float parrySize = 7.5f;
+    public static float parrySize = 10f;
     public static float parryForce = 500;
 
     public static float aimEndScale = 3f;
@@ -47,5 +54,14 @@ public class GameConstants
         GunTurret,
         ShotTurret,
         DualTurret
+    }
+
+    public enum AttackDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right,
+        None
     }
 }
