@@ -17,6 +17,11 @@ public class GameConstants
     public static float healthUpdate = 1f;
     public static float scoreUpdate = 0.5f;
 
+    public static float bulletHitLife = 1.0f;
+    public static float shieldHitLife = 0.2f;
+    public static float explodeLifetime = 2f;
+
+
     // Enemy Constants
     public static float turretRange = 15f;
     public static float turretReload = 5f;
@@ -34,6 +39,12 @@ public class GameConstants
     public static int bulletPoolSize = 200;
     public static int shotBulletPoolSize = 200;
     public static int grenadeBulletPoolSize = 200;
+
+    // Effect Pools
+    public static int shieldEffectsPoolSize = 100;
+    public static int bulletEffectsPoolSize = 100;
+    public static int explosionPoolSize = 10;
+
 
     //  Value Constants
     public static int maxHealth = 40;
@@ -68,6 +79,13 @@ public class GameConstants
         GunTurret,
         ShotTurret,
         DualTurret
+    }
+
+    public enum EffectTypes
+    {
+        ShipExplosion,
+        ShieldHit,
+        BulletHit
     }
 
     public enum AttackDirection

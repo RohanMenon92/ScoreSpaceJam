@@ -109,6 +109,8 @@ public class TurretController : MonoBehaviour
             BulletScript bullet = collision.transform.GetComponent<BulletScript>();
             if(!bullet.isEnemyShot)
             {
+                gameManager.BeginEffect(GameConstants.EffectTypes.BulletHit, transform.position, bullet.transform.position);
+
                 isStunned = true;
                 isStunnedTime = GameConstants.stunTime;
                 health -= bullet.damage;
@@ -148,6 +150,7 @@ public class TurretController : MonoBehaviour
 
     public void OnDeath()
     {
+        gameManager.BeginEffect(GameConstants.EffectTypes.ShipExplosion, transform.position, transform.up);
         gameManager.AddScore(GameConstants.enemyKillScore);
         gameManager.ReturnEnemyToPool(gameObject, enemyType);
     }

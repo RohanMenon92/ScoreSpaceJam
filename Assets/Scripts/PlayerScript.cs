@@ -345,6 +345,8 @@ public class PlayerScript : MonoBehaviour
             BulletScript bullet = collision.transform.GetComponent<BulletScript>();
             if(bullet.isEnemyShot)
             {
+                gameManager.BeginEffect(GameConstants.EffectTypes.BulletHit, transform.position, bullet.transform.position).transform.SetParent(transform);
+
                 OnHit(bullet.damage);
                 bullet.OnHit();
                 //canBeHit = false;

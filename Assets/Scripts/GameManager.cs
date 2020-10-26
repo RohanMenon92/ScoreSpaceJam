@@ -32,7 +32,16 @@ public class GameManager : MonoBehaviour
     public Transform unusedShotTurretPool;
     public Transform unusedDualTurretPool;
 
+    public GameObject shieldHitPrefab;
+    public GameObject bulletHitPrefab;
+    public GameObject explodeEffectPrefab;
+
+    public Transform shieldHitEffectsPool;
+    public Transform bulletHitEffectsPool;
+    public Transform explodeEffectsPool;
+
     public Transform worldBullets;
+    public Transform worldEffects;
 
     public Image healthHolder;
     public Image healthBar;
@@ -90,6 +99,23 @@ public class GameManager : MonoBehaviour
         {
             GameObject gunTurret = Instantiate(dualTurretPrefab, unusedDualTurretPool);
             gunTurret.SetActive(false);
+        }
+
+        // Instantiate Effects
+        for (int i = 0; i <= GameConstants.shieldEffectsPoolSize; i++)
+        {
+            GameObject newShieldhit = Instantiate(shieldHitPrefab, shieldHitEffectsPool);
+            newShieldhit.SetActive(false);
+        }
+        for (int i = 0; i <= GameConstants.bulletEffectsPoolSize; i++)
+        {
+            GameObject newBulletHit = Instantiate(bulletHitPrefab, bulletHitEffectsPool);
+            newBulletHit.SetActive(false);
+        }
+        for (int i = 0; i <= GameConstants.explosionPoolSize; i++)
+        {
+            GameObject explodeEffect = Instantiate(explodeEffectPrefab, explodeEffectsPool);
+            explodeEffect.SetActive(false);
         }
     }
 
@@ -220,6 +246,76 @@ public class GameManager : MonoBehaviour
         }
     }
     // FSM end region
+
+    // Effect Pooling
+    public GameObject BeginEffect(GameConstants.EffectTypes effectType, Vector3 position, Vector3 lookAt)
+    {
+        GameObject effectObject = null;
+
+        switch (effectType)
+        {
+            // Get First Child, set parent to gunport (to remove from respective pool)
+            case GameConstants.EffectTypes.BulletHit:
+                effectObject = bulletHitEffectsPool.GetComponentInChildren<BulletHitEffect>(true).gameObject;
+                break;
+            case GameConstants.EffectTypes.ShieldHit:
+                effectObject = shieldHitEffectsPool.GetComponentInChildren<ShieldHitEffect>(true).gameObject;
+                break;
+                break;
+            case GameConstants.EffectTypes.ShipExplosion:
+                effectObject = explodeEffectsPool.GetComponentInChildren<ExplosionEffect>(true).gameObject;
+                break;
+        }
+
+        //bulletObject.transform.SetParent(worldBullets);
+        //bulletObject.transform.position = gunPort.transform.position;
+        //// Return bullet and let GunPort handle how to fire and set initial velocities
+        //return bulletObject;
+        effectObject.transform.SetParent(worldEffects);
+        effectObject.transform.position = new Vector3(position.x, position.y, position.z);
+        effectObject.transform.up = new Vector3(lookAt.x, lookAt.y, lookAt.z);
+
+        effectObject.SetActive(true);
+
+        switch (effectType)
+        {
+            // Get First Child, set parent to gunport (to remove from respective pool)
+            case GameConstants.EffectTypes.BulletHit:
+                effectObject.GetComponent<BulletHitEffect>().FadeIn();
+                break;
+            case GameConstants.EffectTypes.ShieldHit:
+                effectObject.GetComponent<ShieldHitEffect>().FadeIn();
+                break;
+            case GameConstants.EffectTypes.ShipExplosion:
+                effectObject.GetComponent<ExplosionEffect>().FadeIn();
+                break;
+        }
+
+        return effectObject;
+    }
+
+    public void ReturnEffectToPool(GameObject effectToStore, GameConstants.EffectTypes effectType)
+    {
+        if (effectType == GameConstants.EffectTypes.BulletHit)
+        {
+            // Return to normal bullet pool
+            effectToStore.transform.SetParent(bulletHitEffectsPool);
+        }
+        else if (effectType == GameConstants.EffectTypes.ShieldHit)
+        {
+            // Return to shotgun bullet pool
+            effectToStore.transform.SetParent(shieldHitEffectsPool);
+        }
+        else if (effectType == GameConstants.EffectTypes.ShipExplosion)
+        {
+            // Return to laser bullet pool
+            effectToStore.transform.SetParent(explodeEffectsPool);
+        }
+
+        effectToStore.gameObject.SetActive(false);
+        effectToStore.transform.localScale = Vector3.one;
+        effectToStore.transform.position = Vector3.zero;
+    }
 
     // Bullet Pooling
     public GameObject GetBullet(GameConstants.GunTypes gunType, Transform gunPort)
@@ -364,5 +460,10 @@ public class GameManager : MonoBehaviour
     {
         time -= Time.deltaTime;
         timeBar.fillAmount = time / GameConstants.maxTime;
+    }
+
+    void SpawnEnemies()
+    {
+
     }
 }

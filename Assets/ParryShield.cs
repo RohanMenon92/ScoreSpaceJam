@@ -8,10 +8,12 @@ public class ParryShield : MonoBehaviour
 {
     List<Transform> affectedBullets = new List<Transform>();
     PlayerScript player;
+    GameManager gameManager;
     // Start is called before the first frame update
     void Start()
     {
         player = GetComponentInParent<PlayerScript>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     // Update is called once per frame
@@ -36,6 +38,8 @@ public class ParryShield : MonoBehaviour
         {
             if(!affectedBullets.Contains(collision.transform))
             {
+                gameManager.BeginEffect(GameConstants.EffectTypes.ShieldHit, collision.transform.position, transform.position).transform.SetParent(collision.transform);
+
                 affectedBullets.Add(collision.transform);
             }
         }

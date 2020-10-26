@@ -35,6 +35,7 @@ public class Camera2DFollow : MonoBehaviour
 
     public void CameraShake(float strength)
     {
+        cam.transform.eulerAngles = Vector3.zero;
         cam.DOShakeRotation(GameConstants.hitShakeDuration, strength * 3, 10, 90, true).OnComplete(() => { });
     }
 }
