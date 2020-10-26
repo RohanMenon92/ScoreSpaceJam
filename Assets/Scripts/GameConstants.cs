@@ -75,6 +75,7 @@ public class GameConstants
     public static int clearSceneScore = 100;
 
     public static int EnemyBaseCount = 10;
+    public static string HighScorePlayerPref = "HighScore";
 
     public enum GunTypes
     {

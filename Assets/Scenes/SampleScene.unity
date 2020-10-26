@@ -1971,10 +1971,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2535571446442345298, guid: 32305aca50ab7ca42a2cabba7af5bd75,
+        type: 3}
+      propertyPath: m_Alpha
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7843178080720269417, guid: 32305aca50ab7ca42a2cabba7af5bd75,
         type: 3}
       propertyPath: m_Name
       value: ScoreHolder
+      objectReference: {fileID: 0}
+    - target: {fileID: 7992048674870539072, guid: 32305aca50ab7ca42a2cabba7af5bd75,
+        type: 3}
+      propertyPath: m_Alpha
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8442472759422300020, guid: 32305aca50ab7ca42a2cabba7af5bd75,
         type: 3}

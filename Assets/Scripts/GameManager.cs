@@ -5,17 +5,26 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
     Start,
     Play,
-    End,
-    Exit
+    End
 }
 
 public class GameManager : MonoBehaviour
 {
+    public CanvasGroup gameOverCanvas;
+    public CanvasGroup highScoreCanvas;
+    public CanvasGroup tutorialCanvas;
+
+    public TextMeshProUGUI GOScore;
+    public TextMeshProUGUI GOenemies;
+    public TextMeshProUGUI GOwaves;
+
+
     public GameObject shotgunBulletPrefab;
     public GameObject bulletPrefab;
     public GameObject grenadeBulletPrefab;
@@ -54,13 +63,14 @@ public class GameManager : MonoBehaviour
 
     public int score;
     public int waveCount = 0;
+    public int enemiesKilled = 0;
     public float time;
 
     public Material parriedBulletMaterial;
 
     Sequence healthSequence;
 
-    GameState currentState;
+    GameState currentState = GameState.Start;
 
 
     // Start is called before the first frame update
@@ -70,6 +80,7 @@ public class GameManager : MonoBehaviour
         score = 0;
         waveCount = 0;
         time = GameConstants.maxTime;
+        enemiesKilled = 0;
 
         // Instantiate bullet pools in start
         for (int i = 0; i <= GameConstants.bulletPoolSize; i++)
@@ -122,7 +133,14 @@ public class GameManager : MonoBehaviour
             explodeEffect.SetActive(false);
         }
 
+        timeHolder.DOFade(0f, 0f);
+        timeBar.DOFade(0f, 0f);
+        healthHolder.DOFade(0f, 0f);
+        healthBar.DOFade(0f, 0f);
+        healthBar.fillAmount = 1f;
+
         UpdateEnemies();
+        GameStart();
     }
 
     public void WaitAndSwitchState(GameState newState, float delay)
@@ -149,11 +167,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.End:
                 {
-                    switchAllowed = newState == GameState.Exit;
-                }
-                break;
-            case GameState.Exit:
-                {
+                    //switchAllowed = newState == GameState.Exit;
                 }
                 break;
         }
@@ -166,6 +180,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void GameStart()
+    {
+        tutorialCanvas.DOFade(1f, 0.5f).OnComplete(() => {
+            tutorialCanvas.DOFade(0f, 0.5f).SetDelay(3f).OnComplete(() => {
+                SwitchState(GameState.Play);
+            });
+        });
+    }
+
     // Check entry to stateEnter
     void OnEnterState(GameState stateEnter)
     {
@@ -173,18 +196,35 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Start:
                 {
+                    GameStart();
                 }
                 break;
             case GameState.Play:
                 {
+                    timeHolder.DOFade(1f, 0.25f);
+                    timeBar.DOFade(1f, 0.25f);
+                    healthHolder.DOFade(1f, 0.25f);
+                    healthBar.DOFade(1f, 0.25f);
                 }
                 break;
             case GameState.End:
                 {
-                }
-                break;
-            case GameState.Exit:
-                {
+                    GOScore.text = score.ToString();
+                    GOenemies.text = enemiesKilled.ToString();
+                    GOwaves.text = waveCount.ToString();
+
+                    bool isHighScore = PlayerPrefs.GetInt(GameConstants.HighScorePlayerPref) < score;
+                    if (isHighScore)
+                    {
+                        PlayerPrefs.SetInt(GameConstants.HighScorePlayerPref, score);
+                    }
+
+                    gameOverCanvas.DOFade(1f, 0.5f).OnComplete(() => {
+                        highScoreCanvas.DOFade(isHighScore ? 1f : 0f, 0.25f);
+                        gameOverCanvas.DOFade(0f, 0.5f).SetDelay(2f).OnComplete(() => {
+                            SceneManager.LoadScene(0);
+                        });
+                    });
                 }
                 break;
         }
@@ -228,16 +268,13 @@ public class GameManager : MonoBehaviour
                 {
                 }
                 break;
-            case GameState.Exit:
-                {
-                }
-                break;
+
         }
     }
-    void OnProcessState(GameState stateProcess)
+    void OnProcessState()
     {
 
-        switch (stateProcess)
+        switch (currentState)
         {
 
             case GameState.Start:
@@ -246,13 +283,15 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.Play:
                 {
+                    time -= Time.deltaTime;
+                    timeBar.fillAmount = time / GameConstants.maxTime;
+                    if (time < 0)
+                    {
+                        GameOver();
+                    }
                 }
                 break;
             case GameState.End:
-                {
-                }
-                break;
-            case GameState.Exit:
                 {
                 }
                 break;
@@ -425,6 +464,7 @@ public class GameManager : MonoBehaviour
         enemyToStore.transform.eulerAngles = Vector3.zero;
         enemyToStore.transform.position = Vector3.zero;
         UpdateEnemies();
+        enemiesKilled++;
         if(entities.childCount == 0)
         {
             AddScore(GameConstants.clearSceneScore);
@@ -480,13 +520,22 @@ public class GameManager : MonoBehaviour
         healthSequence.Insert(GameConstants.healthUpdate, healthHolder.DOFade(0.25f, GameConstants.healthUpdate));
         healthSequence.Insert(GameConstants.healthUpdate, healthBar.DOFade(0.25f, GameConstants.healthUpdate));
         healthSequence.Play();
+
+        if(fraction < 0)
+        {
+            GameOver();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        time -= Time.deltaTime;
-        timeBar.fillAmount = time / GameConstants.maxTime;
+        OnProcessState();
+    }
+
+    void GameOver()
+    {
+        SwitchState(GameState.End);
     }
 
     void SpawnEnemies()

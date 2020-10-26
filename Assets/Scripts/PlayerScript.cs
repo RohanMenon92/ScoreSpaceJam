@@ -42,7 +42,6 @@ public class PlayerScript : MonoBehaviour
         parryShield.transform.localScale = Vector3.zero;
 
         attackSprite.color = new Color(0f, 0f, 0f, 0f);
-        gameManager.OnHealthUpdate(health / GameConstants.maxHealth);
     }
 
     // FSM region
