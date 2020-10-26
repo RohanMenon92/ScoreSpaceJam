@@ -45,6 +45,10 @@ public class GameConstants
     public static int bulletEffectsPoolSize = 100;
     public static int explosionPoolSize = 10;
 
+    // Effect Sizes
+    internal static float bulletHitSize = 2f;
+    internal static float shieldHitSize = 0.5f;
+    internal static float explodeSize = 1.5f;
 
     //  Value Constants
     public static int maxHealth = 40;
@@ -61,11 +65,16 @@ public class GameConstants
 
     public static float attackHealthGain = 10f;
     public static float attackTimeGain = 30f;
+    public static float waveCompleteTimeGain = 50f;
 
     // Score
+    public static string enemiesPrefix = "Enemies: ";
     public static string scorePrefix = "Score: ";
     public static int successAttackScore = 25;
     public static int enemyKillScore = 10;
+    public static int clearSceneScore = 100;
+
+    public static int EnemyBaseCount = 10;
 
     public enum GunTypes
     {

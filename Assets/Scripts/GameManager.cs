@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     public Transform bulletHitEffectsPool;
     public Transform explodeEffectsPool;
 
+    public Transform entities;
     public Transform worldBullets;
     public Transform worldEffects;
 
@@ -49,8 +50,10 @@ public class GameManager : MonoBehaviour
     public Image timeHolder;
     public Image timeBar;
     public TextMeshProUGUI scoreHolder;
+    public TextMeshProUGUI enemiesHolder;
 
     public int score;
+    public int waveCount = 0;
     public float time;
 
     public Material parriedBulletMaterial;
@@ -65,6 +68,7 @@ public class GameManager : MonoBehaviour
     {
         // reset score
         score = 0;
+        waveCount = 0;
         time = GameConstants.maxTime;
 
         // Instantiate bullet pools in start
@@ -117,6 +121,8 @@ public class GameManager : MonoBehaviour
             GameObject explodeEffect = Instantiate(explodeEffectPrefab, explodeEffectsPool);
             explodeEffect.SetActive(false);
         }
+
+        UpdateEnemies();
     }
 
     public void WaitAndSwitchState(GameState newState, float delay)
@@ -184,9 +190,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    internal void UpdateEnemies()
+    {
+        enemiesHolder.rectTransform.DOScale(1.2f, GameConstants.scoreUpdate).SetLoops(2, LoopType.Yoyo);
+        enemiesHolder.SetText(GameConstants.enemiesPrefix + entities.GetChildCount());
+
+    }
+
     internal void AddScore(int scoreAmount)
     {
-        healthSequence.Insert(0f, healthBar.rectTransform.DOScale(1.2f, GameConstants.scoreUpdate).SetLoops(2, LoopType.Yoyo));
+        scoreHolder.rectTransform.DOScale(1.2f, GameConstants.scoreUpdate).SetLoops(2, LoopType.Yoyo);
         score += scoreAmount;
         scoreHolder.SetText(GameConstants.scorePrefix + score);
     }
@@ -281,12 +294,15 @@ public class GameManager : MonoBehaviour
         {
             // Get First Child, set parent to gunport (to remove from respective pool)
             case GameConstants.EffectTypes.BulletHit:
+                effectObject.transform.localScale = Vector3.one * GameConstants.bulletHitSize;
                 effectObject.GetComponent<BulletHitEffect>().FadeIn();
                 break;
             case GameConstants.EffectTypes.ShieldHit:
+                effectObject.transform.localScale = Vector3.one * GameConstants.shieldHitSize;
                 effectObject.GetComponent<ShieldHitEffect>().FadeIn();
                 break;
             case GameConstants.EffectTypes.ShipExplosion:
+                effectObject.transform.localScale = Vector3.one * GameConstants.explodeSize;
                 effectObject.GetComponent<ExplosionEffect>().FadeIn();
                 break;
         }
@@ -313,7 +329,6 @@ public class GameManager : MonoBehaviour
         }
 
         effectToStore.gameObject.SetActive(false);
-        effectToStore.transform.localScale = Vector3.one;
         effectToStore.transform.position = Vector3.zero;
     }
 
@@ -386,7 +401,8 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        enemyObject.transform.SetParent(worldBullets);
+        enemyObject.transform.SetParent(entities);
+        enemyObject.SetActive(true);
         // Return bullet and let GunPort handle how to fire and set initial velocities
         return enemyObject;
     }
@@ -408,6 +424,12 @@ public class GameManager : MonoBehaviour
         enemyToStore.gameObject.SetActive(false);
         enemyToStore.transform.eulerAngles = Vector3.zero;
         enemyToStore.transform.position = Vector3.zero;
+        UpdateEnemies();
+        if(entities.childCount == 0)
+        {
+            AddScore(GameConstants.clearSceneScore);
+            SpawnEnemies();
+        }
     }
 
     // SlowMo
@@ -425,14 +447,19 @@ public class GameManager : MonoBehaviour
     public void SuccessfulAttack(float healthFraction)
     {
         OnHealthUpdate(healthFraction);
+        AddTime(GameConstants.attackTimeGain);
+    }
 
+    public void AddTime(float addTime)
+    {
         timeBar.rectTransform.DOScale(1.5f, GameConstants.healthUpdate).SetLoops(2, LoopType.Yoyo);
-        if (time + GameConstants.attackTimeGain < GameConstants.maxTime)
+        if (time + addTime < GameConstants.maxTime)
         {
-            time += GameConstants.attackTimeGain;
-        } else
+            time += addTime;
+        }
+        else
         {
-            time = GameConstants.attackTimeGain;
+            time = addTime;
         }
     }
 
@@ -464,6 +491,30 @@ public class GameManager : MonoBehaviour
 
     void SpawnEnemies()
     {
+        waveCount++;
 
+        AddTime(GameConstants.waveCompleteTimeGain);
+
+        for(int i =0; i <= GameConstants.EnemyBaseCount + waveCount; i++)
+        {
+            float chooser = UnityEngine.Random.Range(0f, 1f);
+            GameObject enemy = null;
+            if(chooser < 0.4f)
+            {
+                enemy = GetEnemy(GameConstants.EnemyTypes.GunTurret);
+            } else if(chooser < 0.75f)
+            {
+                enemy = GetEnemy(GameConstants.EnemyTypes.ShotTurret);
+            }
+            else
+            {
+                enemy = GetEnemy(GameConstants.EnemyTypes.DualTurret);
+            }
+
+            enemy.transform.SetParent(entities);
+            enemy.transform.position = new Vector3(UnityEngine.Random.Range(-25f, 25f), UnityEngine.Random.Range(-20f, 20f), -1f);
+        }
+        UpdateEnemies();
+           
     }
 }
