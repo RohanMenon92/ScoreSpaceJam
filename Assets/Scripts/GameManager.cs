@@ -60,11 +60,18 @@ public class GameManager : MonoBehaviour
     public Image timeBar;
     public TextMeshProUGUI scoreHolder;
     public TextMeshProUGUI enemiesHolder;
-
     public int score;
     public int waveCount = 0;
     public int enemiesKilled = 0;
     public float time;
+
+    [Header("Audio")]
+    public AudioClip shotSound;
+    public AudioClip hitSound;
+    public AudioClip shieldOnSound;
+    public AudioClip shieldOffSound;
+    public AudioClip explodeSound;
+    public AudioSource audioSource;
 
     public Material parriedBulletMaterial;
 
@@ -233,7 +240,7 @@ public class GameManager : MonoBehaviour
     internal void UpdateEnemies()
     {
         enemiesHolder.rectTransform.DOScale(1.2f, GameConstants.scoreUpdate).SetLoops(2, LoopType.Yoyo);
-        enemiesHolder.SetText(GameConstants.enemiesPrefix + entities.GetChildCount());
+        enemiesHolder.SetText(GameConstants.enemiesPrefix + entities.childCount);
 
     }
 
@@ -416,7 +423,7 @@ public class GameManager : MonoBehaviour
                 bulletToStore.GetComponent<MeshRenderer>().material = grenadeBulletPrefab.GetComponent<MeshRenderer>().sharedMaterial;
                 break;
         }
-       bulletToStore.gameObject.SetActive(false);
+        bulletToStore.gameObject.SetActive(false);
         bulletToStore.transform.eulerAngles = Vector3.zero;
         bulletToStore.transform.position = Vector3.zero;
     }
@@ -527,7 +534,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    public void PlaySound(GameConstants.SoundType sound, float volume = 1.0f)
+    {
+        switch (sound)
+        {
+            case GameConstants.SoundType.Explode:
+                audioSource.PlayOneShot(explodeSound, volume);
+                break;
+            case GameConstants.SoundType.Hit:
+                audioSource.PlayOneShot(hitSound, volume);
+                break;
+            case GameConstants.SoundType.Shot:
+                audioSource.PlayOneShot(shotSound, volume);
+                break;
+            case GameConstants.SoundType.ShieldOff:
+                audioSource.PlayOneShot(shieldOffSound, volume);
+                break;
+            case GameConstants.SoundType.ShieldOn:
+                audioSource.PlayOneShot(shieldOnSound, volume);
+                break;
+        }
+    }
+
+    // Update is called once per fram/e
     void Update()
     {
         OnProcessState();

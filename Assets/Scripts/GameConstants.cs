@@ -76,7 +76,17 @@ public class GameConstants
 
     public static int EnemyBaseCount = 10;
     public static string HighScorePlayerPref = "HighScore";
+    public static string invertControlPref = "InvertControls";
 
+
+    public enum SoundType
+    {
+        Explode,
+        Hit,
+        Shot,
+        ShieldOn,
+        ShieldOff
+    }
     public enum GunTypes
     {
         Machine,

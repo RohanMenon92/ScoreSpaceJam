@@ -88,6 +88,7 @@ public class GunPort : MonoBehaviour
                     //}
                     break;
             }
+            gameManager.PlaySound(GameConstants.SoundType.Shot);
             // Cannot fire and start Coroutine to be able to fire next
             canFire = false;
             StartCoroutine(ResetCanFire());

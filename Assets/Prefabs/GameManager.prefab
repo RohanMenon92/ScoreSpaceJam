@@ -2339,10 +2339,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1600, y: 900}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -2598,6 +2598,12 @@ MonoBehaviour:
   waveCount: 0
   enemiesKilled: 0
   time: 0
+  shotSound: {fileID: 8300000, guid: 604b0b96036471f4bb2fabae93cd2226, type: 3}
+  hitSound: {fileID: 8300000, guid: 68fe1dc4993e850418248abb6fb6ae2e, type: 3}
+  shieldOnSound: {fileID: 8300000, guid: c5f622647c29bd240b17950bedaec59e, type: 3}
+  shieldOffSound: {fileID: 8300000, guid: 176245e92a2867f418f4556e5b00b68a, type: 3}
+  explodeSound: {fileID: 8300000, guid: 05251090d78ad43428dbf6dd55bfa3e6, type: 3}
+  audioSource: {fileID: 0}
   parriedBulletMaterial: {fileID: 2100000, guid: b63bcb3646db98d448a828e6ad8dc7f2,
     type: 2}
 --- !u!1 &8442472760420762584

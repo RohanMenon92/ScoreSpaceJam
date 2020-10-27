@@ -114,6 +114,7 @@ public class TurretController : MonoBehaviour
                 isStunned = true;
                 isStunnedTime = GameConstants.stunTime;
                 health -= bullet.damage;
+                gameManager.PlaySound(GameConstants.SoundType.Hit, 0.25f);
 
                 if (health < 0)
                 {
@@ -137,6 +138,7 @@ public class TurretController : MonoBehaviour
 
     public bool RegisterAttack()
     {
+        gameManager.PlaySound(GameConstants.SoundType.Explode, 0.2f);
         isUnderAttack = true;
         isStunnedTime = GameConstants.stunTime;
         attackSequence.Pop();
@@ -150,6 +152,7 @@ public class TurretController : MonoBehaviour
 
     public void OnDeath()
     {
+        gameManager.PlaySound(GameConstants.SoundType.Explode, 0.9f);
         gameManager.BeginEffect(GameConstants.EffectTypes.ShipExplosion, transform.position, transform.up);
         gameManager.AddScore(GameConstants.enemyKillScore);
         gameManager.ReturnEnemyToPool(gameObject, enemyType);

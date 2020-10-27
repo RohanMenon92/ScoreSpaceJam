@@ -25,7 +25,7 @@ public class PlayerScript : MonoBehaviour
     public PlayerState currentState = PlayerState.Idle;
     Vector3 aimStart;
     Vector3 aimEnd;
-
+    float invertControls = 1f;
     Rigidbody2D playerRigidBody;
     GameManager gameManager;
     ParryShield parryShield;
@@ -38,6 +38,8 @@ public class PlayerScript : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         playerRigidBody = GetComponent<Rigidbody2D>();
         camFollow = FindObjectOfType<Camera2DFollow>();
+
+        invertControls = PlayerPrefs.GetFloat(GameConstants.invertControlPref);
 
         parryShield.transform.localScale = Vector3.zero;
 
@@ -104,6 +106,7 @@ public class PlayerScript : MonoBehaviour
                     parryShield.EnableShield();
                     playerRigidBody.angularVelocity = 0;
 
+                    gameManager.PlaySound(GameConstants.SoundType.ShieldOn, 0.75f);
                     aimTransform.position = Camera.main.ScreenToWorldPoint(new Vector3(aimStart.x, aimStart.y, -GameConstants.cameraDistance));
                     aimTransform.DOScale(new Vector3(GameConstants.aimEndScale, 1f, GameConstants.aimEndScale), GameConstants.aimAppearTime).SetEase(Ease.OutBack).OnComplete(() => {
                         if(currentState == PlayerState.Aiming)
@@ -121,8 +124,8 @@ public class PlayerScript : MonoBehaviour
 
                     // DO LOOK AT
                     Vector3 direction = (aimEnd - aimStart).normalized;
-                    parryShield.BoostAction(direction);
-                    transform.DOLookAt(transform.position - direction, GameConstants.playerRotateTime, AxisConstraint.None, transform.up).OnComplete(() => {
+                    parryShield.BoostAction(-invertControls * direction);
+                    transform.DOLookAt(transform.position + (invertControls * direction), GameConstants.playerRotateTime, AxisConstraint.None, transform.up).OnComplete(() => {
                         playerRigidBody.velocity = Vector2.zero;
                         playerRigidBody.AddForce(pushForce * transform.forward);
                         SwitchState(PlayerState.Idle);
@@ -157,6 +160,7 @@ public class PlayerScript : MonoBehaviour
                 break;
             case PlayerState.Aiming:
                 {
+                    gameManager.PlaySound(GameConstants.SoundType.ShieldOff, 0.75f);
                     aimTransform.DOScale(new Vector3(0f, 0f, 0f), GameConstants.aimAppearTime).SetEase(Ease.InOutBack);
                 }
                 break;
@@ -186,9 +190,9 @@ public class PlayerScript : MonoBehaviour
                 {
                     Vector3 target = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -GameConstants.cameraDistance));
                     // "Do NOT LookAt"
-                    aimTransform.LookAt(aimTransform.position - (target - aimTransform.position), transform.up);
+                    aimTransform.LookAt(aimTransform.position + (target - aimTransform.position) * invertControls, transform.up);
 
-                    parryShield.transform.LookAt(transform.position - (target - aimTransform.position), transform.up);
+                    parryShield.transform.LookAt(transform.position + (target - aimTransform.position) * invertControls, transform.up);
                 }
                 break;
             case PlayerState.Boosting:
@@ -199,7 +203,7 @@ public class PlayerScript : MonoBehaviour
                 {
                     Vector3 target = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -GameConstants.cameraDistance));
                     // "Do NOT LookAt"
-                    aimTransform.LookAt(aimTransform.position - (target - aimTransform.position), transform.up);
+                    aimTransform.LookAt(aimTransform.position + (target - aimTransform.position) * invertControls, transform.up);
 
 
                     attackSprite.transform.position = attackedEnemy.transform.position + new Vector3(0f, 0f, -2f);
@@ -212,7 +216,7 @@ public class PlayerScript : MonoBehaviour
 
     GameConstants.AttackDirection GetSwipeDirection()
     {
-        Vector3 normalizedSwipe = (aimStart - aimEnd).normalized;
+        Vector3 normalizedSwipe = (aimStart - aimEnd).normalized * invertControls;
 
         if (normalizedSwipe.y > 0.75f)
         {
@@ -332,7 +336,10 @@ public class PlayerScript : MonoBehaviour
 
     void SuccessfulAttack()
     {
-        health += GameConstants.attackHealthGain;
+        if(health < GameConstants.maxHealth)
+        {
+            health += GameConstants.attackHealthGain;
+        }
         gameManager.SuccessfulAttack(health/GameConstants.maxHealth);
         SwitchState(PlayerState.Idle);
     }
@@ -344,6 +351,7 @@ public class PlayerScript : MonoBehaviour
             BulletScript bullet = collision.transform.GetComponent<BulletScript>();
             if(bullet.isEnemyShot)
             {
+                gameManager.PlaySound(GameConstants.SoundType.Hit, 0.75f);
                 gameManager.BeginEffect(GameConstants.EffectTypes.BulletHit, transform.position, bullet.transform.position).transform.SetParent(transform);
 
                 OnHit(bullet.damage);
